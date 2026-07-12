@@ -42,7 +42,7 @@ const VARIANT_CONFIG: Record<
   development: {
     appName: "DTRP T3 Dev",
     scheme: "dtrp-t3-dev",
-    iosIcon: "./assets/icon-composer-dev.icon",
+    iosIcon: "./assets/icon.png",
     splashIcon: "./assets/splash-icon-dev.png",
     iosBundleIdentifier: "com.demontimerp.t3code.dev",
     androidPackage: "com.demontimerp.t3code.dev",
@@ -51,7 +51,7 @@ const VARIANT_CONFIG: Record<
   preview: {
     appName: "DTRP T3 Preview",
     scheme: "dtrp-t3-preview",
-    iosIcon: "./assets/icon-composer-prod.icon",
+    iosIcon: "./assets/icon.png",
     splashIcon: "./assets/splash-icon-prod.png",
     iosBundleIdentifier: "com.demontimerp.t3code.preview",
     androidPackage: "com.demontimerp.t3code.preview",
@@ -60,7 +60,7 @@ const VARIANT_CONFIG: Record<
   production: {
     appName: "DTRP T3",
     scheme: "dtrp-t3",
-    iosIcon: "./assets/icon-composer-prod.icon",
+    iosIcon: "./assets/icon.png",
     splashIcon: "./assets/splash-icon-prod.png",
     iosBundleIdentifier: "com.demontimerp.t3code",
     androidPackage: "com.demontimerp.t3code",
