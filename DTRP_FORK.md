@@ -21,8 +21,9 @@ agent handle Git and workspace mechanics.
 - DTRP target selection, authority, testing, PR review, deployment, and verification remain owned by
   the existing repository tools and agent instructions.
 - This fork is optional and does not replace the ChatGPT/Codex app.
-- The installed T3 v0.0.28 service is not switched to this fork until the fork passes focused and
-  end-to-end validation.
+- The upstream T3 v0.0.28 service remains isolated on `127.0.0.1:3773`. The validated fork runs as
+  the separate `dtrp-t3-code` user service on `127.0.0.1:4773`, exposed only inside the DTRP
+  tailnet.
 
 ## Separate Mac and mobile identity
 
