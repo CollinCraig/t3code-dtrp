@@ -1691,6 +1691,21 @@ export const makeGitVcsDriverCore = Effect.fn("makeGitVcsDriverCore")(function* 
       Effect.orElseSucceed(() => null),
     );
     if (currentUpstream) {
+      const publishBranch = yield* resolvePublishBranchName(cwd, branch);
+      if (currentUpstream.branchName !== publishBranch) {
+        yield* runGit("GitVcsDriver.pushCurrentBranch.repairMismatchedUpstream", cwd, [
+          "push",
+          "-u",
+          currentUpstream.remoteName,
+          `HEAD:refs/heads/${publishBranch}`,
+        ]);
+        return {
+          status: "pushed" as const,
+          branch,
+          upstreamBranch: `${currentUpstream.remoteName}/${publishBranch}`,
+          setUpstream: true,
+        };
+      }
       yield* runGit("GitVcsDriver.pushCurrentBranch.pushUpstream", cwd, [
         "push",
         currentUpstream.remoteName,
@@ -1908,7 +1923,9 @@ export const makeGitVcsDriverCore = Effect.fn("makeGitVcsDriverCore")(function* 
               "--patch",
               "--minimal",
               ...(input.ignoreWhitespace ? ["--ignore-all-space"] : []),
-              `${baseRef}...HEAD`,
+              "--merge-base",
+              baseRef,
+              "--",
             ],
             {
               maxOutputBytes: REVIEW_DIFF_PATCH_MAX_OUTPUT_BYTES,
@@ -1924,7 +1941,12 @@ export const makeGitVcsDriverCore = Effect.fn("makeGitVcsDriverCore")(function* 
             })),
           )
         : null;
-    const baseDiff = baseResult?.stdout ?? "";
+    // A branch review is the complete change set against its base. Agents normally
+    // leave edits uncommitted during a turn, so base...HEAD alone makes the default
+    // Diff view look empty while work is actively happening.
+    const baseDiff = [baseResult?.stdout.trimEnd() ?? "", dirtyUntracked.diff.trimEnd()]
+      .filter((diff) => diff.length > 0)
+      .join("\n");
     const hashDiff = (diff: string) =>
       crypto.digest("SHA-256", new TextEncoder().encode(diff)).pipe(
         Effect.map(Encoding.encodeHex),
@@ -1963,7 +1985,10 @@ export const makeGitVcsDriverCore = Effect.fn("makeGitVcsDriverCore")(function* 
         headRef: branch ?? "HEAD",
         diff: baseDiff,
         diffHash: baseDiffHash,
-        truncated: baseResult?.stdoutTruncated ?? false,
+        truncated:
+          (baseResult?.stdoutTruncated ?? false) ||
+          dirtyTrackedResult.stdoutTruncated ||
+          dirtyUntracked.truncated,
       },
     ];
 
