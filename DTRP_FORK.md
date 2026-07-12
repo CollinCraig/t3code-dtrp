@@ -23,3 +23,30 @@ agent handle Git and workspace mechanics.
 - This fork is optional and does not replace the ChatGPT/Codex app.
 - The installed T3 v0.0.28 service is not switched to this fork until the fork passes focused and
   end-to-end validation.
+
+## Separate Mac and mobile identity
+
+The fork installs beside upstream T3 instead of replacing it:
+
+- Product name: `DTRP T3`
+- macOS/iOS/Android application ID: `com.demontimerp.t3code`
+- Production URL scheme: `dtrp-t3`; development: `dtrp-t3-dev`
+- Desktop user-data directory: `dtrp-t3`, backed by `~/.dtrp-t3` (upstream continues to use
+  `t3code` and `~/.t3`)
+- Desktop updates publish from the GitHub repository performing the build, or from
+  `T3CODE_DESKTOP_UPDATE_REPOSITORY` when explicitly set.
+
+The fork deliberately contains no T3 Tools Apple, Expo, Clerk, APNS, or App Store credentials.
+Set these public identity values when the DTRP-owned services exist:
+
+```dotenv
+DTRP_T3_APPLE_TEAM_ID=XXXXXXXXXX
+DTRP_T3_RELYING_PARTY=auth.example.com
+DTRP_T3_EAS_OWNER=your-expo-owner
+DTRP_T3_EAS_PROJECT_ID=00000000-0000-0000-0000-000000000000
+```
+
+Without an EAS project ID, mobile OTA updates are disabled. A personal-team iOS build remains
+available with `T3CODE_IOS_PERSONAL_TEAM=1` and a unique
+`T3CODE_IOS_PERSONAL_TEAM_BUNDLE_ID`; that mode intentionally removes widgets, push, and native
+Apple sign-in because a free Personal Team cannot sign those capabilities.
