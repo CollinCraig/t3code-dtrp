@@ -421,6 +421,9 @@ export function useSettingsRestore(onRestored?: () => void) {
       ...(settings.confirmThreadDelete !== DEFAULT_UNIFIED_SETTINGS.confirmThreadDelete
         ? ["Delete confirmation"]
         : []),
+      ...(settings.dtrpBranding !== DEFAULT_UNIFIED_SETTINGS.dtrpBranding
+        ? ["DemonTimeRP branding"]
+        : []),
       ...(isGitWritingModelDirty ? ["Git writing model"] : []),
     ],
     [
@@ -428,6 +431,7 @@ export function useSettingsRestore(onRestored?: () => void) {
       settings.autoOpenPlanSidebar,
       settings.confirmThreadArchive,
       settings.confirmThreadDelete,
+      settings.dtrpBranding,
       settings.addProjectBaseDirectory,
       settings.defaultThreadEnvMode,
       settings.newWorktreesStartFromOrigin,
@@ -465,6 +469,7 @@ export function useSettingsRestore(onRestored?: () => void) {
       addProjectBaseDirectory: DEFAULT_UNIFIED_SETTINGS.addProjectBaseDirectory,
       confirmThreadArchive: DEFAULT_UNIFIED_SETTINGS.confirmThreadArchive,
       confirmThreadDelete: DEFAULT_UNIFIED_SETTINGS.confirmThreadDelete,
+      dtrpBranding: DEFAULT_UNIFIED_SETTINGS.dtrpBranding,
       textGenerationModelSelection: DEFAULT_UNIFIED_SETTINGS.textGenerationModelSelection,
     });
     onRestored?.();
@@ -516,6 +521,28 @@ export function GeneralSettingsPanel() {
   return (
     <SettingsPageContainer>
       <SettingsSection title="General">
+        <SettingsRow
+          title="DemonTimeRP branding"
+          description="Use the compact DTRP wordmark and red accent palette. Turn this off for the standard T3 look."
+          resetAction={
+            settings.dtrpBranding !== DEFAULT_UNIFIED_SETTINGS.dtrpBranding ? (
+              <SettingResetButton
+                label="DemonTimeRP branding"
+                onClick={() =>
+                  updateSettings({ dtrpBranding: DEFAULT_UNIFIED_SETTINGS.dtrpBranding })
+                }
+              />
+            ) : null
+          }
+          control={
+            <Switch
+              checked={settings.dtrpBranding}
+              onCheckedChange={(checked) => updateSettings({ dtrpBranding: Boolean(checked) })}
+              aria-label="Use DemonTimeRP branding"
+            />
+          }
+        />
+
         <SettingsRow
           title="Theme"
           description="Choose how T3 Code looks across the app."

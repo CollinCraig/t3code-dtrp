@@ -50,3 +50,25 @@ Without an EAS project ID, mobile OTA updates are disabled. A personal-team iOS 
 available with `T3CODE_IOS_PERSONAL_TEAM=1` and a unique
 `T3CODE_IOS_PERSONAL_TEAM_BUNDLE_ID`; that mode intentionally removes widgets, push, and native
 Apple sign-in because a free Personal Team cannot sign those capabilities.
+
+## Thin, toggleable appearance layer
+
+The DTRP visual treatment is intentionally client-only and reversible. General Settings includes a
+`DemonTimeRP branding` switch. When enabled (the fork default), it applies the compact DTRP wordmark
+and red accent palette. Disabling it restores the standard T3 wordmark and palette immediately.
+
+No DTRP operational rules live in the theme. Agent behavior remains owned by the target repository's
+`AGENTS.md`, skills, and server-side configuration, keeping appearance changes easy to rebase.
+
+## Updating from upstream T3
+
+The fork tracks the official repository as the `upstream` remote. From a clean checkout, run:
+
+```bash
+./scripts/dtrp-sync-upstream.sh
+```
+
+The script fetches `pingdotgg/t3code`, fast-forwards the fork's local `main` to `origin/main`, and
+merges the newest upstream `main` into a dated `maintenance/upstream-YYYYMMDD` branch. It never pushes
+or merges into the fork's `main` directly. Validate and review that branch, then publish it through a
+pull request.
