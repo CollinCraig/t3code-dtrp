@@ -88,8 +88,10 @@ describe("ServerSettings.providerInstances (slice-2 invariant)", () => {
 });
 
 describe("ServerSettings worktree defaults", () => {
-  it("defaults start-from-origin off for legacy configs", () => {
-    expect(decodeServerSettings({}).newWorktreesStartFromOrigin).toBe(false);
+  it("defaults new threads to fresh origin-backed worktrees", () => {
+    const settings = decodeServerSettings({});
+    expect(settings.defaultThreadEnvMode).toBe("worktree");
+    expect(settings.newWorktreesStartFromOrigin).toBe(true);
   });
 
   it("accepts start-from-origin updates", () => {

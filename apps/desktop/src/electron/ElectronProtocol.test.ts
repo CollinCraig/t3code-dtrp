@@ -23,6 +23,12 @@ describe("ElectronProtocol", () => {
     unhandleMock.mockReset();
   });
 
+  it("uses DTRP-owned renderer schemes", () => {
+    assert.equal(ElectronProtocol.getDesktopScheme(false), "dtrp-t3");
+    assert.equal(ElectronProtocol.getDesktopScheme(true), "dtrp-t3-dev");
+    assert.equal(ElectronProtocol.getDesktopUrl(false), "dtrp-t3://app/");
+  });
+
   it.effect("proxies the stable renderer origin to the current app server", () =>
     Effect.gen(function* () {
       let handler: ((request: Request) => Promise<Response>) | undefined;

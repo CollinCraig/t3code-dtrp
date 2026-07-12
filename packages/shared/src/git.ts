@@ -10,7 +10,9 @@ import * as Arr from "effect/Array";
 import * as Result from "effect/Result";
 import { detectSourceControlProviderFromRemoteUrl } from "./sourceControl.ts";
 
-export const WORKTREE_BRANCH_PREFIX = "t3code";
+// DTRP fork default: every agent-owned task branch is immediately compatible
+// with the server's existing feature/<operator>/<slug> workflow.
+export const WORKTREE_BRANCH_PREFIX = "feature/sol";
 const TEMP_WORKTREE_BRANCH_PATTERN = new RegExp(`^${WORKTREE_BRANCH_PREFIX}\\/[0-9a-f]{8}$`);
 
 /**

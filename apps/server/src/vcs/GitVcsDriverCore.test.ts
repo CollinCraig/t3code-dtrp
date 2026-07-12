@@ -243,6 +243,24 @@ it.layer(TestLayer)("GitVcsDriver core integration", (it) => {
         );
       }),
     );
+
+    it.effect("includes in-progress working-tree edits in the branch preview", () =>
+      Effect.gen(function* () {
+        const cwd = yield* makeTmpDir();
+        const { initialBranch } = yield* initRepoWithCommit(cwd);
+        const driver = yield* GitVcsDriver.GitVcsDriver;
+        yield* git(cwd, ["checkout", "-b", "feature/sol/live-diff"]);
+        yield* writeTextFile(cwd, "in-progress.ts", "export const visible = true;\n");
+
+        const preview = yield* driver.getReviewDiffPreview({ cwd, baseRef: initialBranch });
+        const workingTree = preview.sources.find((source) => source.kind === "working-tree");
+        const branch = preview.sources.find((source) => source.kind === "branch-range");
+
+        assert.include(workingTree?.diff, "in-progress.ts");
+        assert.include(branch?.diff, "in-progress.ts");
+        assert.include(branch?.diff, "export const visible = true;");
+      }),
+    );
   });
 
   describe("repository status", () => {
@@ -804,6 +822,45 @@ it.layer(TestLayer)("GitVcsDriver core integration", (it) => {
           timeoutMs: 10_000,
         });
         assert.notEqual(originMain.exitCode, 0);
+      }),
+    );
+
+    it.effect("repairs a feature branch that incorrectly tracks the default branch", () =>
+      Effect.gen(function* () {
+        const cwd = yield* makeTmpDir();
+        const remote = yield* makeTmpDir("git-remote-");
+        yield* initRepoWithCommit(cwd);
+        const driver = yield* GitVcsDriver.GitVcsDriver;
+        yield* git(cwd, ["branch", "-M", "main"]);
+        yield* git(remote, ["init", "--bare"]);
+        yield* git(cwd, ["remote", "add", "origin", remote]);
+        yield* git(cwd, ["push", "-u", "origin", "main"]);
+        const mainBefore = yield* git(remote, ["rev-parse", "main"]);
+
+        yield* driver.createRef({ cwd, refName: "feature/sol/safe-push" });
+        yield* driver.switchRef({ cwd, refName: "feature/sol/safe-push" });
+        yield* git(cwd, ["branch", "--set-upstream-to", "origin/main"]);
+        yield* writeTextFile(cwd, "feature.txt", "feature\n");
+        yield* driver.prepareCommitContext(cwd);
+        yield* driver.commit(cwd, "Add safe feature", "");
+
+        const pushed = yield* driver.pushCurrentBranch(cwd, null);
+
+        assert.deepInclude(pushed, {
+          status: "pushed",
+          branch: "feature/sol/safe-push",
+          upstreamBranch: "origin/feature/sol/safe-push",
+          setUpstream: true,
+        });
+        assert.equal(yield* git(remote, ["rev-parse", "main"]), mainBefore);
+        assert.equal(
+          yield* git(remote, ["log", "-1", "--pretty=%s", "feature/sol/safe-push"]),
+          "Add safe feature",
+        );
+        assert.equal(
+          yield* git(cwd, ["rev-parse", "--abbrev-ref", "@{upstream}"]),
+          "origin/feature/sol/safe-push",
+        );
       }),
     );
   });
