@@ -101,6 +101,13 @@ describe("ServerSettings worktree defaults", () => {
   });
 });
 
+describe("ClientSettings DTRP appearance", () => {
+  it("enables the reversible DTRP appearance layer by default", () => {
+    expect(decodeClientSettings({}).dtrpBranding).toBe(true);
+    expect(decodeClientSettings({ dtrpBranding: false }).dtrpBranding).toBe(false);
+  });
+});
+
 describe("ServerSettingsPatch.providerInstances", () => {
   it("treats providerInstances as an optional whole-map replacement", () => {
     const patch = decodeServerSettingsPatch({});

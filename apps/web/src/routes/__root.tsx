@@ -101,6 +101,7 @@ function RootRouteView() {
     return (
       <>
         <DocumentTitleSync />
+        <DtrpBrandingSync />
         <Outlet />
       </>
     );
@@ -110,6 +111,7 @@ function RootRouteView() {
     return (
       <>
         <DocumentTitleSync />
+        <DtrpBrandingSync />
         <Outlet />
       </>
     );
@@ -127,6 +129,7 @@ function RootRouteView() {
     <ToastProvider>
       <AnchoredToastProvider>
         <DocumentTitleSync />
+        <DtrpBrandingSync />
         {primaryEnvironmentAuthenticated ? <AuthenticatedTracingBootstrap /> : null}
         <RelayClientInstallDialog />
         <ConnectOnboardingDialog />
@@ -142,6 +145,7 @@ function RootRouteView() {
 }
 
 function DocumentTitleSync() {
+  const dtrpBranding = useClientSettings((settings) => settings.dtrpBranding);
   const primaryServerVersion =
     useAtomValue(primaryServerConfigAtom)?.environment.serverVersion ?? null;
   const title = resolveServerBackedAppDisplayName({
@@ -152,8 +156,18 @@ function DocumentTitleSync() {
   });
 
   useEffect(() => {
-    document.title = title;
-  }, [title]);
+    document.title = title.replace(/^(?:DTRP T3|T3 Code)/, dtrpBranding ? "DTRP T3" : "T3 Code");
+  }, [dtrpBranding, title]);
+
+  return null;
+}
+
+function DtrpBrandingSync() {
+  const enabled = useClientSettings((settings) => settings.dtrpBranding);
+
+  useEffect(() => {
+    document.documentElement.toggleAttribute("data-dtrp-branding", enabled);
+  }, [enabled]);
 
   return null;
 }

@@ -224,6 +224,65 @@
   animation-duration: 0s !important;
 }
 
+/* DTRP is a client-side appearance layer. Keeping the overrides behind one
+   document attribute makes the fork easy to rebase and restores stock T3
+   immediately when the setting is disabled. */
+:root[data-dtrp-branding] {
+  --primary: oklch(0.57 0.235 25);
+  --ring: oklch(0.57 0.235 25);
+  --info: oklch(0.62 0.2 25);
+}
+
+:root.dark[data-dtrp-branding] {
+  --primary: oklch(0.66 0.235 25);
+  --ring: oklch(0.66 0.235 25);
+  --accent: color-mix(in srgb, oklch(0.57 0.235 25) 12%, transparent);
+}
+
+.dtrp-wordmark {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.25rem;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.dtrp-wordmark-primary {
+  color: var(--primary);
+  font-size: 0.875rem;
+  font-weight: 900;
+  font-style: italic;
+  text-shadow: 0 0 0.75rem color-mix(in srgb, var(--primary) 28%, transparent);
+}
+
+.dtrp-wordmark-secondary {
+  color: var(--muted-foreground);
+  font-size: 0.625rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.dtrp-splash-wordmark {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: var(--primary);
+  font-size: 1.75rem;
+  font-weight: 950;
+  font-style: italic;
+  letter-spacing: -0.08em;
+  line-height: 0.85;
+  filter: drop-shadow(0 0 1.25rem color-mix(in srgb, var(--primary) 30%, transparent));
+}
+
+.dtrp-splash-wordmark small {
+  margin-top: 0.4rem;
+  color: var(--muted-foreground);
+  font-size: 0.55rem;
+  font-style: normal;
+  letter-spacing: 0.24em;
+}
+
 :root {
   color-scheme: light;
   --radius: 0.625rem;
