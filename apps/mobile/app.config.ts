@@ -266,14 +266,22 @@ const config: ExpoConfig = {
     ...(isIosPersonalTeamBuild
       ? [sharingPlugin]
       : ["./plugins/withShareExtensionDisplayName.cjs", sharingPlugin]),
-    [
-      "expo-notifications",
-      {
-        icon: variant.assets.androidNotificationIcon,
-        color: variant.assets.androidNotificationColor,
-        mode: APP_VARIANT === "development" ? "development" : "production",
-      },
-    ],
+    // expo-notifications adds the iOS push entitlement during prebuild. A
+    // Personal Team cannot sign that entitlement, so omit the plugin entirely
+    // for reduced-capability iOS builds. The JS package remains available and
+    // the app already skips remote registration through iosPersonalTeamBuild.
+    ...(!isIosPersonalTeamBuild
+      ? [
+          [
+            "expo-notifications",
+            {
+              icon: variant.assets.androidNotificationIcon,
+              color: variant.assets.androidNotificationColor,
+              mode: APP_VARIANT === "development" ? "development" : "production",
+            },
+          ] satisfies NonNullable<ExpoConfig["plugins"]>[number],
+        ]
+      : []),
     // appleSignIn must be gated here: withoutIosPersonalTeamCapabilities.cjs runs before
     // plugins earlier in this array, so it cannot strip the entitlement Clerk would add.
     [
