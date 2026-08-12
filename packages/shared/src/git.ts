@@ -10,10 +10,15 @@ import * as Arr from "effect/Array";
 import * as Result from "effect/Result";
 import { detectSourceControlProviderFromRemoteUrl } from "./sourceControl.ts";
 
-// DTRP fork default: every agent-owned task branch is immediately compatible
-// with the server's existing feature/<operator>/<slug> workflow.
+// DTRP tasks use the server's feature/<operator>/<slug> branch convention.
 export const WORKTREE_BRANCH_PREFIX = "feature/sol";
-const TEMP_WORKTREE_BRANCH_PATTERN = new RegExp(`^${WORKTREE_BRANCH_PREFIX}\\/[0-9a-f]{8}$`);
+// Canonical form is `feature/sol/<8 hex>`. Older mobile builds generated `<prefix>/<uuid>`
+// via Crypto.randomUUID() (always RFC 4122 v4), so the matcher also accepts exactly
+// that shape — version nibble `4`, variant nibble `[89ab]` — to keep those threads
+// eligible for branch regeneration without loosening beyond what was ever generated.
+const TEMP_WORKTREE_BRANCH_PATTERN = new RegExp(
+  `^${WORKTREE_BRANCH_PREFIX}\\/(?:[0-9a-f]{8}|[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})$`,
+);
 
 /**
  * Sanitize an arbitrary string into a valid, lowercase git refName fragment.
@@ -91,7 +96,12 @@ export function deriveLocalBranchNameFromRemoteRef(branchName: string): string {
 export function buildTemporaryWorktreeBranchName(
   randomHex: (byteLength: number) => string,
 ): string {
-  const token = randomHex(4).toLowerCase();
+  // Normalize to exactly 8 lowercase hex chars so a UUID-shaped callback
+  // still produces the canonical temporary branch form.
+  const token = randomHex(4)
+    .toLowerCase()
+    .replace(/[^0-9a-f]/g, "")
+    .slice(0, 8);
   return `${WORKTREE_BRANCH_PREFIX}/${token}`;
 }
 
