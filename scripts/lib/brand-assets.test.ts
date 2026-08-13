@@ -89,16 +89,14 @@ describe("brand-assets", () => {
       BRAND_ASSET_PATHS.nightlyIconComposerProject,
       BRAND_ASSET_PATHS.productionIconComposerProject,
     ]).toEqual([
-      "assets/branding/demoncode-icon-master.png",
-      "assets/branding/demoncode-icon-master.png",
-      "assets/branding/demoncode-icon-master.png",
+      "assets/branding/demoncode-app-icon.icon",
+      "assets/branding/demoncode-app-icon.icon",
+      "assets/branding/demoncode-app-icon.icon",
     ]);
     expect(BRAND_ASSET_PATHS.developmentDesktopIconPng).toBe(
-      "assets/branding/demoncode-icon-master.png",
+      "assets/branding/demoncode-macos-1024.png",
     );
-    expect(BRAND_ASSET_PATHS.nightlyMacIconPng).toBe("assets/branding/demoncode-icon-master.png");
-    expect(BRAND_ASSET_PATHS.productionMacIconPng).toBe(
-      "assets/branding/demoncode-icon-master.png",
-    );
+    expect(BRAND_ASSET_PATHS.nightlyMacIconPng).toBe("assets/branding/demoncode-macos-1024.png");
+    expect(BRAND_ASSET_PATHS.productionMacIconPng).toBe("assets/branding/demoncode-macos-1024.png");
   });
 });
