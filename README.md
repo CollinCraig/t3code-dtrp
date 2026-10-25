@@ -1,3 +1,19 @@
+# DTRP T3 Code
+
+This is my customized fork of [T3 Code](https://github.com/pingdotgg/t3code), not the upstream project. The original T3 Code and its contributors remain credited below.
+
+## What’s different in this fork
+- Origin-based isolated worktrees for new tasks.
+- Branch-publishing safeguards and diffs that include in-progress changes.
+- Separate app identity and storage, plus a toggleable DTRP appearance layer.
+
+See [DTRP_FORK.md](DTRP_FORK.md) for the implementation details and upstream update workflow. [The foundation PR](https://github.com/CollinCraig/t3code-dtrp/pull/1) includes the changes, regression tests, and recorded validation; it was merged into this fork, not upstream.
+
+## Development approach
+I use AI coding assistants in my development workflow, with project direction and orchestration led by me. This is not a claim that I personally hand-wrote every change or authored the upstream code.
+
+## Upstream README
+
 # T3 Code
 
 T3 Code is an "agent harness control surface". It enables control of the agents on your machine with a best-in-class mobile app ([iOS](https://apps.apple.com/us/app/t3-code-remote-claude-more/id6787819824), [Android](https://play.google.com/store/apps/details?id=com.t3tools.t3code)), [web app](https://app.t3.codes) and [Electron-based desktop app](https://t3.codes).
